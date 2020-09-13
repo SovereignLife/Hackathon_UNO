@@ -4,20 +4,23 @@ import { TouchableOpacity } from 'react-native-gesture-handler'
 
 interface Props {
     filter: { id: Number, result_url: String },
-    navigation: NavigationType
+    navigation: NavigationType,
+
 }
 
 const FilterCard = (props: Props) => {
 
-    const { id, result_url } = props.filter
-
+    const { id, result_url, content_preview } = props.filter
+    //const width = content_preview.original_size.width / 
+    const width = '45%'
+    const height = content_preview.original_size.height / 4
     const goToFilterDetailed = () => {
         props.navigation.navigate('FilterDetailed', { id, result_url })
     }
     return (
-        <View style={styles.card}>
+        <View style={[styles.card, { width, height }]}>
             <TouchableOpacity onPress={goToFilterDetailed} >
-                <Image style={styles.image} source={{ uri: result_url }} />
+                <Image style={[styles.image, { width: '100%', height }]} source={{ uri: result_url }} />
             </TouchableOpacity>
         </View>
     )
@@ -26,7 +29,8 @@ const FilterCard = (props: Props) => {
 const styles = StyleSheet.create({
     card: {
         elevation: 1,
-        borderRadius: 6,
+        borderColor: '#000',
+        borderWidth: 1,
         overflow: 'hidden',
         margin: 6,
         width: '45%',

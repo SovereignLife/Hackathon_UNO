@@ -9,7 +9,7 @@ import useCachedResources from './hooks/useCachedResources';
 import useColorScheme from './hooks/useColorScheme';
 import Navigation from './navigation';
 
-
+const BACKGROUND_COLOR = "#2B3050"
 
 export default function App() {
   const isLoadingComplete = useCachedResources();
@@ -22,7 +22,7 @@ export default function App() {
       <PaperProvider>
         <Provider store={store}>
           <Navigation colorScheme={colorScheme} />
-          <StatusBar backgroundColor="#fff" />
+          <StatusBar backgroundColor={BACKGROUND_COLOR} />
         </Provider>
       </PaperProvider>
     );

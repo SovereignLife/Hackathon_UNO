@@ -6,16 +6,13 @@ import NotFoundScreen from '../screens/NotFoundScreen';
 import { RootStackParamList } from '../types';
 import BottomTabNavigator from './BottomTabNavigator';
 import LinkingConfiguration from './LinkingConfiguration';
-import {
-  selectCurrentUrl,
-} from '../store/imageSlice';
-import { Provider, useSelector, useDispatch } from 'react-redux';
+
 import { Portal } from 'react-native-paper';
 
 
 export default function Navigation({ colorScheme }: { colorScheme: ColorSchemeName }) {
 
-  const currentImage = useSelector(selectCurrentUrl)
+
   const whiteLayer = <View style={[StyleSheet.absoluteFill, { backgroundColor: '#64d4f9' }]} />
 
   return (

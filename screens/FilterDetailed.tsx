@@ -2,9 +2,17 @@ import React, { useState, useEffect } from 'react';
 import { StyleSheet, Image, Platform, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
-import EditScreenInfo from '../components/EditScreenInfo';
+import FilterCard from '../components/FilterCard';
 import { Text, View } from '../components/Themed';
-import { Colors, Button, ActivityIndicator, FAB, Portal, Provider } from 'react-native-paper';
+import { Colors, Button, ActivityIndicator, FAB, Portal, Provider, Title, Appbar } from 'react-native-paper';
+import { ScrollView } from 'react-native-gesture-handler';
+import {
+    selectCurrentUrl,
+    setCurrentUrl
+} from '../store/imageSlice';
+import { useSelector, useDispatch } from 'react-redux';
+
+const BACKGROUND_COLOR = "#2B3050"
 
 interface Props {
     id: Number,
@@ -12,13 +20,38 @@ interface Props {
 }
 
 export default function FilterDetailed(props: Props) {
+    const currentImage = useSelector(selectCurrentUrl)
     const [image, setimage] = useState(null)
     const [imageFiltered, setImageFiltered] = useState(null)
     const [imageFiltering, setImageFiltering] = useState(false)
-    const { id, preview_url } = props.route.params
+    const [bestFilters, setbestFilters] = useState(null)
+    const dispatch = useDispatch();
+
+
+    const navigation = props.navigation
+
+    let { id, preview_url } = props.route.params
+
     useEffect(() => {
-        _pickImage()
+        _getBestFilters()
     }, [])
+
+    useEffect(() => {
+        if (currentImage) {
+            setImageFiltering(true)
+            setimage(currentImage)
+            _filterImage(currentImage)
+        }
+
+    }, [currentImage])
+
+
+
+    const _getBestFilters = async () => {
+        const response = await fetch('https://photolab.me/api/feed/best')
+        const json = await response.json()
+        setbestFilters(json)
+    }
 
     const getPermissionAsync = async () => {
         if (Platform.OS !== 'web') {
@@ -45,8 +78,9 @@ export default function FilterDetailed(props: Props) {
             });
             setimage(result.uri)
             const uploadedImage = await _uploadImage(result)
-            setImageFiltered(await _filterImage(uploadedImage))
-            setImageFiltering(false)
+            dispatch(setCurrentUrl(uploadedImage))
+            await _filterImage(uploadedImage)
+
         } catch (E) {
             console.log('pickError', E);
         }
@@ -87,23 +121,50 @@ export default function FilterDetailed(props: Props) {
             const response = await fetch('https://photolab.me/api/create', { method: 'POST', body })
             const json = await response.json()
             console.log('template', id, 'text', json)
-            return json.result_img
+            setImageFiltered(json.result_img)
+            setImageFiltering(false)
 
         } catch (E) {
             console.log('filterError', E)
         }
+
+
     }
+
     return (
-        <View style={{ flex: 1 }}>
-            <View style={styles.imageContainer}>
-                {image && <Image source={{ uri: image }} style={styles.image} />}
-                {imageFiltered && <Image source={{ uri: imageFiltered }} style={styles.image} />}
-                {imageFiltering && <ActivityIndicator style={styles.activityIndicator} animating={true} size={32} color={Colors.red800} />}
-            </View>
-            <View>
-                <Button onPress={_pickImage} icon="folder">Выбрать фото</Button>
-                <Button icon="camera">Снять на камеру</Button>
-            </View>
+        <View style={styles.container}>
+            <Appbar style={styles.appBar}>
+                <Appbar.BackAction color="#fff" onPress={() => navigation.goBack()} />
+                <Appbar.Content color="#fff" title="Фильтр" />
+            </Appbar>
+            <ScrollView>
+
+                <View style={styles.imageContainer}>
+                    {image ? <Image source={{ uri: image }} style={styles.image} />
+                        :
+                        <TouchableOpacity onPress={_pickImage} style={[styles.image, { flexDirection: 'column', position: 'relative', alignItems: 'center' }]}>
+                            <Image resizeMode="contain" source={require('../assets/images/sadDog.png')} style={styles.image} />
+                        </TouchableOpacity>}
+                    {imageFiltered && <Image source={{ uri: imageFiltered }} style={styles.image} />}
+                    {imageFiltering && <ActivityIndicator style={styles.activityIndicator} animating={true} size={32} color={Colors.red800} />}
+                </View>
+                <Title style={[styles.title, { color: '#ff6a66', textAlign: 'center', justifyContent: 'center' }]}>Выбери фотографию</Title>
+
+                <View style={{ flexDirection: 'column', }}>
+                    <Button color="#fff" onPress={_pickImage} icon="folder">Выбрать фото</Button>
+                    <Button color="#fff" icon="camera">Снять на камеру</Button>
+                </View>
+                <Title style={styles.title}>Похожие фильтры</Title>
+                <ScrollView pagingEnabled={true} style={styles.scrollView} showsHorizontalScrollIndicator={false} horizontal={true}>
+                    {bestFilters && bestFilters.map(filter => {
+                        return (
+                            <TouchableOpacity onPress={() => { id = filter.id; _filterImage(currentImage) }}>
+                                <FilterCard navigation={navigation} key={filter.id} filter={filter} />
+                            </TouchableOpacity>
+                        )
+                    })}
+                </ScrollView>
+            </ScrollView>
         </View>
     )
 }
@@ -113,7 +174,23 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         elevation: 1,
+        backgroundColor: BACKGROUND_COLOR,
         marginTop: 25
+    },
+    scrollView: {
+        width: '100%',
+        backgroundColor: BACKGROUND_COLOR
+    },
+    appBar: {
+        elevation: 0,
+        backgroundColor: 'transparent'
+    },
+    title: {
+        marginTop: 10,
+        padding: 10,
+        color: '#556272',
+
+        backgroundColor: BACKGROUND_COLOR
     },
     imageContainer: {
         width: '100%',

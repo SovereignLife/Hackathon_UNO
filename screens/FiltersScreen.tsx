@@ -9,6 +9,8 @@ import { ScrollView } from 'react-native-gesture-handler';
 import coolFilters from '../coolFilters.json'
 import FilterCard from '../components/FilterCard'
 
+const BACKGROUND_COLOR = "#2B3050"
+
 export default function TabOneScreen({ navigation }) {
   const [image, setimage] = useState(null)
   const [imageFiltered, setImageFiltered] = useState(null)
@@ -27,7 +29,8 @@ export default function TabOneScreen({ navigation }) {
 
   return (
     <ScrollView style={styles.container}>
-      <Title style={styles.title}>Тупо топ фильтров, потому что категорий у нас нет</Title>
+      <Title style={styles.title}>Топ фильтров</Title>
+
       <View style={styles.row}>
         {bestFilters && bestFilters.map(filter => {
           return (
@@ -44,7 +47,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     marginTop: 25,
-    backgroundColor: '#FFF'
+    backgroundColor: BACKGROUND_COLOR
   },
   imageContainer: {
     width: '100%',
@@ -60,6 +63,8 @@ const styles = StyleSheet.create({
   title: {
     marginTop: 10,
     padding: 10,
+    color: '#fff',
+
 
   },
   activityIndicator: {
@@ -67,10 +72,13 @@ const styles = StyleSheet.create({
 
   },
   row: {
-    flexDirection: 'row',
+    flexDirection: 'column',
+    maxHeight: 4000,
     flexWrap: 'wrap',
     flex: 1,
     alignItems: 'center',
-    justifyContent: 'center'
+    paddingLeft: 10,
+    paddingTop: 10,
+
   }
 });

@@ -2,18 +2,22 @@ import { Ionicons } from '@expo/vector-icons';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import { createStackNavigator } from '@react-navigation/stack';
 import * as React from 'react';
-import { BottomNavigation, Text } from 'react-native-paper';
+import { View } from '../components/Themed';
+import { Portal, Text, Provider } from 'react-native-paper';
 import Colors from '../constants/Colors';
 import useColorScheme from '../hooks/useColorScheme';
 import FiltersScreen from '../screens/FiltersScreen';
 import FavoritesScreen from '../screens/FavoritesScreen';
 import FilterDetailed from '../screens/FilterDetailed'
+import CurrentImage from '../components/CurrentImage'
+
 import { BottomTabParamList, FiltersScreenParamList, FavoritesScreenParamList } from '../types';
+
 
 
 const BottomTab = createBottomTabNavigator<BottomTabParamList>();
 
-export default function BottomTabNavigator() {
+function BottomTabNavigator() {
   const colorScheme = useColorScheme();
 
   return (
@@ -48,20 +52,26 @@ function TabBarIcon(props: { name: string; color: string }) {
 // https://reactnavigation.org/docs/tab-based-navigation#a-stack-navigator-for-each-tab
 const FiltersScreenStack = createStackNavigator<FiltersScreenParamList>();
 
-function FilterScreenNavigator() {
+export default function FilterScreenNavigator() {
   return (
-    <FiltersScreenStack.Navigator>
-      <FiltersScreenStack.Screen
-        name="FiltersScreen"
-        component={FiltersScreen}
-        options={{ headerShown: false }}
-      />
-      <FiltersScreenStack.Screen
-        name="FilterDetailed"
-        component={FilterDetailed}
-        options={{ headerTitle: '' }}
-      />
-    </FiltersScreenStack.Navigator>
+    <Provider>
+
+      <FiltersScreenStack.Navigator >
+        <FiltersScreenStack.Screen
+          name="FiltersScreen"
+          component={FiltersScreen}
+          options={{ headerShown: false }}
+        />
+        <FiltersScreenStack.Screen
+          name="FilterDetailed"
+          component={FilterDetailed}
+          options={{ headerShown: false }}
+        />
+      </FiltersScreenStack.Navigator>
+      <View style={{ position: 'absolute', top: 60, right: 30, backgroundColor: 'transparent' }}>
+        <CurrentImage />
+      </View>
+    </Provider>
   );
 }
 
@@ -70,6 +80,7 @@ const FavoritesScreenStuck = createStackNavigator<FavoritesScreenParamList>();
 function FavoritesScreenNavigator() {
   return (
     <FavoritesScreenStuck.Navigator>
+
       <FavoritesScreenStuck.Screen
         name="FavoritesScreen"
         component={FavoritesScreen}
