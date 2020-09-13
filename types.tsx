@@ -6,12 +6,15 @@ export type RootStackParamList = {
 export type BottomTabParamList = {
   TabOne: undefined;
   TabTwo: undefined;
+  "Фильтры": undefined;
+  "Избранное": undefined
 };
 
-export type TabOneParamList = {
-  TabOneScreen: undefined;
+export type FiltersScreenParamList = {
+  FiltersScreen: undefined;
+  FilterDetailed: undefined;
 };
 
-export type TabTwoParamList = {
-  TabTwoScreen: undefined;
+export type FavoritesScreenParamList = {
+  FavoritesScreen: undefined;
 };
