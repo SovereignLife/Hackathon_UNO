@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { StyleSheet, Image, Platform, TouchableOpacity } from 'react-native';
+import { StyleSheet, Image, RefreshControl, TouchableOpacity } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import EditScreenInfo from '../components/EditScreenInfo';
@@ -12,9 +12,7 @@ import FilterCard from '../components/FilterCard'
 const BACKGROUND_COLOR = "#2B3050"
 
 export default function TabOneScreen({ navigation }) {
-  const [image, setimage] = useState(null)
-  const [imageFiltered, setImageFiltered] = useState(null)
-  const [imageFiltering, setImageFiltering] = useState(false)
+  const [loading, setLoading] = useState(false)
   const [bestFilters, setbestFilters] = useState(null)
 
   useEffect(() => {
@@ -22,15 +20,23 @@ export default function TabOneScreen({ navigation }) {
   }, [])
 
   const _getBestFilters = async () => {
-    const response = await fetch('https://photolab.me/api/feed/best')
-    const json = await response.json()
-    setbestFilters(json)
+    try {
+      setLoading(true)
+      const response = await fetch('https://photolab.me/api/feed/best')
+      const json = await response.json()
+      setbestFilters(json)
+      setLoading(false)
+    } catch (error) {
+      console.error(error)
+      setLoading(false)
+    }
   }
 
   return (
-    <ScrollView style={styles.container}>
+    <ScrollView refreshControl={
+      <RefreshControl refreshing={loading} onRefresh={_getBestFilters} />
+    } style={styles.container}>
       <Title style={styles.title}>Топ фильтров</Title>
-
       <View style={styles.row}>
         {bestFilters && bestFilters.map(filter => {
           return (

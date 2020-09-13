@@ -1,7 +1,7 @@
 {
   "expo": {
-    "name": "HelloWorld",
-    "slug": "uno_app",
+    "name": "UNO LAB",
+    "slug": "uno_lab",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
@@ -18,6 +18,11 @@
     "assetBundlePatterns": [
       "**/*"
     ],
+    "android": {
+      "versionCode": 1,
+      "permissions": [],
+      "package": "com.photohack.uno"
+    },
     "ios": {
       "supportsTablet": true
     },

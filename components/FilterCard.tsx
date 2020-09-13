@@ -30,7 +30,7 @@ const styles = StyleSheet.create({
     card: {
         elevation: 1,
         borderColor: '#000',
-        borderWidth: 1,
+        borderRadius: 2,
         overflow: 'hidden',
         margin: 6,
         width: '45%',
