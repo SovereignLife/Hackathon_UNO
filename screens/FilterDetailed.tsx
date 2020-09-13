@@ -158,7 +158,7 @@ export default function FilterDetailed(props: Props) {
                 <ScrollView pagingEnabled={true} style={styles.scrollView} showsHorizontalScrollIndicator={false} horizontal={true}>
                     {bestFilters && bestFilters.map(filter => {
                         return (
-                            <TouchableOpacity onPress={() => { id = filter.id; _filterImage(currentImage) }}>
+                            <TouchableOpacity style={{ width: 100 }} onPress={() => { id = filter.id; _filterImage(currentImage) }}>
                                 <FilterCard navigation={navigation} key={filter.id} filter={filter} />
                             </TouchableOpacity>
                         )
